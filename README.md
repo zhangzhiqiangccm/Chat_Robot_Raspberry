@@ -1,0 +1,2 @@
+# Chat_Robot_Raspberry
+用树莓派搭建语言聊天机器人，可以扩展GPIO操作传感器或执行器
