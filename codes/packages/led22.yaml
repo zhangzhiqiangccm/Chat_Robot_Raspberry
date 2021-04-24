@@ -1,0 +1,30 @@
+shell_command:
+  gpio22_init: (echo 22 > /sys/class/gpio/export) && (sleep 1) && (echo out > /sys/class/gpio/gpio22/direction)
+  gpio22_turn_on: (echo 1 > /sys/class/gpio/gpio22/value)
+  gpio22_turn_off: (echo 0 > /sys/class/gpio/gpio22/value)
+  gpio22_deinit: (echo 22 > /sys/class/gpio/unexport)
+
+light:
+  - platform: template
+    lights:
+      gpio22_led_light:
+        friendly_name: GPIO22_LED
+        turn_on:
+          service: shell_command.gpio22_turn_on
+        turn_off:
+          service: shell_command.gpio22_turn_off
+automation:
+  - alias: create GPIO22 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      service: shell_command.gpio22_init
+  - alias: delete GPIO22 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: shutdown
+    action:
+      service: shell_command.gpio22_deinit

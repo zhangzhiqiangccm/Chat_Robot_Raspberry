@@ -1,0 +1,179 @@
+conversation:
+  intents:
+    # 温度
+    RoomTemperature:
+      - "现在多热"
+      - "现在[室内]几度"
+      - "现在[室内]温度多少"
+      - ".*(?:温度|冷).*"
+    # 湿度
+    Roomhumidity:
+      - "现在[湿度]多少"
+      - ".*(?:湿度|潮湿).*"
+    
+    # 灯具控制
+    OpenLight18:
+      - "打开(?:18号|卧室)?灯"
+      - "开(?:18号|卧室)?灯"
+      - "把(?:18号|卧室)?灯打开"
+    CloseLight18:
+      - "关闭(?:18号|卧室)?灯"
+      - "把(?:18号|卧室)?灯关闭"
+      - "把(?:18号|卧室)?灯关掉"
+    OpenLight22:
+      - "打开(?:22号|厨房)?灯"
+      - "开(?:22号|厨房)?灯"
+      - "把(?:22号|厨房)?灯打开"
+    CloseLight22:
+      - "关闭(?:22号|厨房)?灯"
+      - "把(?:22号|厨房)?灯关闭"
+      - "把(?:22号|厨房)?灯关掉"
+    OpenLight27:
+      - "打开(?:27号|客厅)?灯"
+      - "开(?:27号|客厅)?灯"
+      - "把(?:27号|客厅)?灯打开"
+    CloseLight27:
+      - "关闭(?:27号|客厅)?灯"
+      - "把(?:27号|客厅)?灯关闭"
+      - "把(?:27号|客厅)?灯关掉"
+    OpenLightall:
+      - "打开(?:所有|全部)?灯"
+      - "开(?:所有|全部)?灯"
+    CloseLightall:
+      - "关闭(?:所有|全部)?灯"
+      - "把(?:所有|全部)?灯关闭"
+      - "把(?:所有|全部)?灯关掉"
+    # 窗帘电机控制
+    OpenLight:
+      - "打开窗帘"
+      - "开(?:号|卧室)?窗帘"
+      - "把(?:号|卧室)?窗帘打开"
+    CloseLight:
+      - "关闭(?:号|卧室)?窗帘"
+      - "把(?:号|卧室)?窗帘关闭"
+      - "把(?:号|卧室)?窗帘关掉"
+    # 继电器控制
+    OpenLightjdq:
+      - "打开开关"
+      - "开(?:号|卧室)?开关"
+      - "把(?:号|卧室)?开关打开"
+    CloseLightjdq:
+      - "关闭(?:号|卧室)?开关"
+      - "把(?:号|卧室)?开关关闭"
+      - "把(?:号|卧室)?开关关掉"
+intent_script:
+  RoomTemperature:
+    speech:
+      text: 当前室内{{states.sensor.dht_sensor_temperature.state}}度
+  Roomhumidity:
+    speech:
+      text: 当前室内湿度百分之{{states.sensor.dht_sensor_humidity.state}}
+  
+  # 灯具控制
+  OpenLight18:
+    speech:
+      text: 正在打开卧室灯
+    action:
+      service: light.turn_on
+      data: 
+        entity_id: light.gpio18_led_light
+  CloseLight18:
+    async_action: true
+    speech:
+      text: 正在关闭卧室灯
+    action:
+      service: light.turn_off
+      data: 
+        entity_id: light.gpio18_led_light
+  OpenLight22:
+    speech:
+      text: 正在打开厨房灯
+    action:
+      service: light.turn_on
+      data: 
+        entity_id: light.gpio22_led_light
+  CloseLight22:
+    async_action: true
+    speech:
+      text: 正在关闭厨房灯
+    action:
+      service: light.turn_off
+      data: 
+        entity_id: light.gpio22_led_light
+  OpenLight27:
+    speech:
+      text: 正在打开客厅灯
+    action:
+      service: light.turn_on
+      data: 
+        entity_id: light.gpio27_led_light
+  CloseLight27:
+    async_action: true
+    speech:
+      text: 正在关闭客厅灯
+    action:
+      service: light.turn_off
+      data: 
+        entity_id: light.gpio27_led_light
+  
+  OpenLightall:
+    speech:
+      text: 正在打开所有灯
+    action:
+      - service: light.turn_on
+        data: 
+          entity_id: light.gpio18_led_light
+      - service: light.turn_on
+        data: 
+          entity_id: light.gpio22_led_light
+      - service: light.turn_on
+        data: 
+          entity_id: light.gpio27_led_light
+
+  CloseLightall:
+    async_action: true
+    speech:
+      text: 正在关闭所有灯
+    action:
+      - service: light.turn_off
+        data: 
+          entity_id: light.gpio18_led_light
+      - service: light.turn_off
+        data: 
+          entity_id: light.gpio22_led_light
+      - service: light.turn_off
+        data: 
+          entity_id: light.gpio27_led_light
+
+  # 窗帘电机控制
+  OpenLight:
+    speech:
+      text: 正在打开窗帘
+    action:
+      service: input_boolean.turn_on
+      data: 
+        entity_id: input_boolean.notify_home
+  CloseLight:
+    async_action: true
+    speech:
+      text: 正在关闭窗帘
+    action:
+      service: input_boolean.turn_off
+      data: 
+        entity_id: input_boolean.notify_home
+
+  OpenLightjdq:
+    speech:
+      text: 正在打开开关
+    action:
+      service: light.turn_on
+      data: 
+        entity_id: light.gpio23_led_light
+  CloseLightjdq:
+    async_action: true
+    speech:
+      text: 正在关闭开关
+    action:
+      service: light.turn_off
+      data: 
+        entity_id: light.gpio23_led_light

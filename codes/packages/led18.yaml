@@ -1,0 +1,30 @@
+shell_command:
+  gpio18_init: (echo 18 > /sys/class/gpio/export) && (sleep 1) && (echo out > /sys/class/gpio/gpio18/direction)
+  gpio18_turn_on: (echo 1 > /sys/class/gpio/gpio18/value)
+  gpio18_turn_off: (echo 0 > /sys/class/gpio/gpio18/value)
+  gpio18_deinit: (echo 18 > /sys/class/gpio/unexport)
+
+light:
+  - platform: template
+    lights:
+      gpio18_led_light:
+        friendly_name: GPIO18_LED
+        turn_on:
+          service: shell_command.gpio18_turn_on
+        turn_off:
+          service: shell_command.gpio18_turn_off
+automation:
+  - alias: create GPIO18 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      service: shell_command.gpio18_init
+  - alias: delete GPIO18 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: shutdown
+    action:
+      service: shell_command.gpio18_deinit

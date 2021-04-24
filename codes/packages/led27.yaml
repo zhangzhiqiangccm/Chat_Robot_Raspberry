@@ -1,0 +1,30 @@
+shell_command:
+  gpio27_init: (echo 27 > /sys/class/gpio/export) && (sleep 1) && (echo out > /sys/class/gpio/gpio27/direction)
+  gpio27_turn_on: (echo 1 > /sys/class/gpio/gpio27/value)
+  gpio27_turn_off: (echo 0 > /sys/class/gpio/gpio27/value)
+  gpio27_deinit: (echo 27 > /sys/class/gpio/unexport)
+
+light:
+  - platform: template
+    lights:
+      gpio27_led_light:
+        friendly_name: GPIO27_LED
+        turn_on:
+          service: shell_command.gpio27_turn_on
+        turn_off:
+          service: shell_command.gpio27_turn_off
+automation:
+  - alias: create GPIO27 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      service: shell_command.gpio27_init
+  - alias: delete GPIO27 sysfs
+    initial_state: True
+    trigger:
+      - platform: homeassistant
+        event: shutdown
+    action:
+      service: shell_command.gpio27_deinit
